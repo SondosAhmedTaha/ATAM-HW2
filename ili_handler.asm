@@ -50,7 +50,6 @@ continue_HW3:
 
 
 old_handler_HW3:
-  jmp * old_ili_handler
   #restore reg
   popq %r15
   popq %r14
@@ -67,6 +66,7 @@ old_handler_HW3:
   popq %rcx
   popq %rbx
   popq %rax
+  jmp * old_ili_handler
   jmp End_HW3
 
 exit_HW3:

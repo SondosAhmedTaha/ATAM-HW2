@@ -1,7 +1,7 @@
 .global count_above
 #############DO NOT FORGET TO CLOSE THE FILE############
-
-count_above: 
+.section .text
+count_above:
     # Prologue
     pushq %rbp 
     movq %rsp, %rbp

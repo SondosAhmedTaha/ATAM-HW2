@@ -49,7 +49,7 @@ READ:
     movb %r12b, -64(%rbp, %r14)  #save the character in numer array
     inc %r14
     cmp $19, %r14 # if we reached the maximum length of a number we shoud check if it is greater of the limit we were given
-    jbe READ
+    jb READ
 
  Check_NUMBER:    
     #first we need to add a null terminator to the char* number

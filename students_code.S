@@ -17,8 +17,6 @@ count_above:
   #there is nothing to do :)
   call get_path
   #POST-CALL
-  #there is nothing to do :)
-
   movq %rax, -16(%rbp) #path file
 
   #open file for reading
@@ -42,7 +40,7 @@ READ:
     movq $1, %rdx # we need to read 1 byte
     syscall
     cmp $0, %rax  # if EOF CHECK THAT LAST NUMBER
-    je Check_NUMBER
+    je Check_NUMBERLast
 
     movb (%rsi), %r12b
     cmp %r13b, %r12b
@@ -54,14 +52,44 @@ READ:
     jbe READ
 
  Check_NUMBER:    
-    
-    
-    
-    
-    
-  # Epilogue
-  leave
-  ret
+    #first we need to add a null terminator to the char* number
+    movb $0, -64(%rbp, %r14)
+    # PRE-CALL
+    lea -64(%rbp), %rdi 
+    #call
+    call atam_atol
+    movq %rax , %r11 #save number in R11
+
+    #now we need to check if the number we got is greater than limit
+    movq -8(%rbp) , %r10
+    cmp %r10,%r11
+    jg    ADD_TO_COUNT
+    xor %r14, %r14
+    jmp READ
+
+ADD_TO_COUNT: 
+    inc %r15
+    xor %r14, %r14
+    jmp READ
+
+Check_NUMBERLast:
+      #first we need to add a null terminator to the char* number
+    movb $0, -64(%rbp, %r14)
+    # PRE-CALL
+    lea -64(%rbp), %rdi 
+    #call
+    call atam_atol
+    movq %rax , %r11 #save number in R11
+
+    #now we need to check if the number we got is greater than limit
+    movq -8(%rbp) , %r10
+    cmp %r10,%r11
+    jg    ADD_TO_COUNTLast
+    jmp END_HW3
+ADD_TO_COUNTLast:
+    inc %r15
+    jmp END_HW3
+
 FAIL_HW3:
   #close file
   movq -24(%rbp), %rdi

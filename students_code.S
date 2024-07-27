@@ -26,6 +26,7 @@ count_above:
     testq %rax, %rax
     js FAIL_HW3
     movq %rax, -24(%rbp) # Save file descriptor
+    movq %rax, %rdi
 
     # Initialize counters and indices
     xor %r15, %r15 # R15 is the counter

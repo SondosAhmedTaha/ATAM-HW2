@@ -40,9 +40,10 @@ READ:
     leaq -64(%rbp), %rsi # Address for the array to read into
     movq $1, %rdx        # Number of bytes to read (1 byte)
     syscall
-    cmp $0, %rax         # Check for EOF
-    je Check_NUMBERLast  # If EOF, check the last number
-
+    cmpb $1, %al         # Check for EOF
+    je continue
+    jmp Check_NUMBERLast  # If EOF, check the last number
+continue:
     movb (%rsi), %r12b   # Load the character
     cmp %r13b, %r12b     # Compare with separator
     je Check_NUMBER      # If separator, process the number

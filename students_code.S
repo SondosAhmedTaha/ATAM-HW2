@@ -5,7 +5,7 @@ count_above:
     # Prologue
     pushq %rbp 
     movq %rsp, %rbp
-    subq $48, %rsp  # Allocate space for local variables
+    subq $56, %rsp  # Allocate space for local variables
 
     # Save arguments on the stack
     movq %rdi, -8(%rbp)   # Save separator
@@ -44,7 +44,7 @@ READ:
     jmp Check_NUMBERLast  # If EOF, check the last number
 continue:
     movb (%rsi), %r12b   # Load the character
-    cmp %r13, %r12     # Compare with separator
+    cmpb %r13b, %r12b     # Compare with separator
     je Check_NUMBER      # If separator, process the number
 
     movb %r12b, -48(%rbp, %r14,1)  # Save the character in number`s array

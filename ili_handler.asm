@@ -25,6 +25,7 @@ my_ili_handler:
   movq $0, %rax
   movq $0, %rbx
   movq $0, %rdi
+  movq $0, %rcx
   
   #get the opcode
   movq 120(%rsp), %rax
@@ -33,11 +34,13 @@ my_ili_handler:
   #get the byte that is going to be passed to what_to_do
   cmpb $0x0f, %al 
   je two_byte_HW3
+  movq $1, %rcx
   movb %al, %bl
   jmp continue_HW3
 
 two_byte_HW3:
   movb %ah, %bl
+  movq $2, %rcx
 
   #call what_to_do, if return value is 0 call old handler
 continue_HW3:
@@ -46,7 +49,9 @@ continue_HW3:
   cmpq $0, %rax
   je old_handler_HW3
   movq %rax, %rdi
-  jmp exit_HW3
+  cmpq $1, %rcx
+  je exit_one_byte_HW3
+  jmp exit_two_butes_HW3
 
 
 old_handler_HW3:
@@ -69,7 +74,28 @@ old_handler_HW3:
   jmp * old_ili_handler
   jmp End_HW3
 
-exit_HW3:
+exit_one_byte_HW3:
+  #restore reg
+  popq %r15
+  popq %r14
+  popq %r13
+  popq %r12
+  popq %r11
+  popq %r10
+  popq %r9
+  popq %r8
+  popq %rbp
+  popq %rsp
+  popq %rsi
+  popq %rdx
+  popq %rcx
+  popq %rbx
+  popq %rax
+  #make rip point to the next instruction
+  addq $1, (%rsp)
+  jmp End_HW3
+
+exit_two_bytes_HW3:
   #restore reg
   popq %r15
   popq %r14

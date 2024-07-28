@@ -50,11 +50,7 @@ continue:
     movb %r12b, -48(%rbp, %r14,1)  # Save the character in number`s array
     inc %r14
 
-##############################we can assume that there is no number longer than 19 , so no need for this check:)  #########################
-
-    cmp $19, %r14        # Ensure buffer doesn't overflow (19 chars + 1 for null terminator)
-    jb READ
-
+    jmp READ
 Check_NUMBER:    
     # Add null terminator to the char* number
     movb $0, -48(%rbp, %r14,1)

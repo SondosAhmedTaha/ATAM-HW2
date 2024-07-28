@@ -5,11 +5,11 @@ count_above:
     # Prologue
     pushq %rbp 
     movq %rsp, %rbp
-    subq $36, %rsp  # Allocate space for local variables
+    subq $48, %rsp  # Allocate space for local variables
 
     # Save arguments on the stack
-    movb %dil, -1(%rbp)   # Save separator
-    movq %rsi, -8(%rbp)   # Save limit
+    movq %rdi, -8(%rbp)   # Save separator
+    movq %rsi, -16(%rbp)   # Save limit
 
     xor %rax, %rax # Reset rax
 
@@ -24,19 +24,19 @@ count_above:
     syscall
     testq %rax, %rax
     js FAIL_HW3
-    movq %rax, -16(%rbp) # Save file descriptor
+    movq %rax, -24(%rbp) # Save file descriptor
     movq %rax, %rdi
 
     # Initialize counters and indices
     xor %r15, %r15 # R15 is the counter
     xor %r14, %r14 # R14 is the index for the array
-    movb -1(%rbp), %r13b  # Save separator
+    movq -8(%rbp), %r13  # Save separator
 
 READ:
     # Read a character from the file
     xor %rax, %rax       # sys_read system call number
-    movq -16(%rbp), %rdi # File descriptor
-    leaq -36(%rbp), %rsi # Address for the array to read into
+    movq -24(%rbp), %rdi # File descriptor
+    leaq -56(%rbp), %rsi # Address for the array to read into
     movq $1, %rdx        # Number of bytes to read (1 byte)
     syscall
     cmpb $1, %al         # Check for EOF
@@ -44,24 +44,24 @@ READ:
     jmp Check_NUMBERLast  # If EOF, check the last number
 continue:
     movb (%rsi), %r12b   # Load the character
-    cmp %r13b, %r12b     # Compare with separator
+    cmp %r13, %r12     # Compare with separator
     je Check_NUMBER      # If separator, process the number
 
-    movb %r12b, -36(%rbp, %r14)  # Save the character in number array
+    movb %r12b, -48(%rbp, %r14,1)  # Save the character in number`s array
     inc %r14
     cmp $19, %r14        # Ensure buffer doesn't overflow (19 chars + 1 for null terminator)
     jb READ
 
 Check_NUMBER:    
     # Add null terminator to the char* number
-    movb $0, -36(%rbp, %r14)
+    movb $0, -48(%rbp, %r14,1)
     # Convert string to number
-    lea -36(%rbp), %rdi 
+    lea -48(%rbp), %rdi 
     call atam_atol
     movq %rax, %r11      # Save number in R11
 
     # Check if the number is greater than limit
-    movq -8(%rbp), %r10
+    movq -16(%rbp), %r10
     cmp %r10, %r11
     jg ADD_TO_COUNT
     xor %r14, %r14
@@ -74,14 +74,14 @@ ADD_TO_COUNT:
 
 Check_NUMBERLast:
     # Add null terminator to the char* number
-    movb $0, -36(%rbp, %r14)
+    movb $0, -48(%rbp, %r14)
     # Convert string to number
-    lea -36(%rbp), %rdi 
+    lea -48(%rbp), %rdi 
     call atam_atol
     movq %rax, %r11      # Save number in R11
 
     # Check if the number is greater than limit
-    movq -8(%rbp), %r10
+    movq -16(%rbp), %r10
     cmp %r10, %r11
     jg ADD_TO_COUNTLast
     jmp END_HW3
@@ -92,7 +92,7 @@ ADD_TO_COUNTLast:
 
 FAIL_HW3:
     # Close file
-    movq -16(%rbp), %rdi
+    movq -24(%rbp), %rdi
     movq $3, %rax
     syscall
     # Return -1 to indicate failure
@@ -104,7 +104,7 @@ FAIL_HW3:
 
 END_HW3:
     # Close file
-    movq -16(%rbp), %rdi
+    movq -24(%rbp), %rdi
     movq $3, %rax
     syscall
     # Return the counter value

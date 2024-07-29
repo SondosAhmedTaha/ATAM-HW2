@@ -3,9 +3,7 @@
 void my_store_idt(struct desc_ptr *idtr) {
 // <STUDENT FILL> - HINT: USE INLINE ASSEMBLY
     asm ("sidt %0;"
-        :
-        :"=m"(*idtr)
-        :
+        :"=m"(*idtr)::
         );
     return;
 }
@@ -14,9 +12,7 @@ void my_load_idt(struct desc_ptr *idtr) {
 // <STUDENT FILL> - HINT: USE INLINE ASSEMBLY
 
     asm ("lidt %0;"
-        :"m"(*idtr)
-        :
-        :
+        ::"m"(*idtr):
         );
     return;
 }
@@ -42,5 +38,5 @@ unsigned long my_get_gate_offset(gate_desc *gate) {
     return_value = return_value + gate->offset_middle;
     return_value = return_value << 16;
     return_value = return_value + gate->offset_low;
-    return return_value;
+    return return_value;
 }

@@ -51,7 +51,7 @@ continue_HW3:
   movq %rax, %rdi
   cmpq $1, %rcx
   je exit_one_byte_HW3
-  jmp exit_two_butes_HW3
+  jmp exit_two_bytes_HW3
 
 
 old_handler_HW3:
@@ -116,4 +116,4 @@ exit_two_bytes_HW3:
   addq $2, (%rsp)
 
 End_HW3:
-  iretq
+  iretq
